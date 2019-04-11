@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:IFWXML="http://shl.wsdl_demo.com/soap/shl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="IFWXML_MS" targetNamespace="http://shl.wsdl_demo.com/soap/shl/">
+  <types>
+    <xsd:schema targetNamespace="http://shl.wsdl_demo.com/soap/shl/">
+      <xsd:complexType name="RequestHeader">
+        <xsd:sequence>
+          <xsd:element name="businessAcceptId" type="xsd:string"/>
+          <xsd:element name="serialNumber" type="xsd:string"/>
+          <xsd:element name="version" type="xsd:string"/>
+          <xsd:element name="cmdType" type="xsd:string"/>
+          <xsd:element name="requester" type="xsd:string"/>
+          <xsd:element name="channel" type="xsd:string"/>
+          <xsd:element name="requestTimeStamp" type="xsd:string"/>
+          <xsd:element name="teller1" type="xsd:string"/>
+          <xsd:element name="teller2" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="RequestHeader" type="IFWXML:RequestHeader"/>
+      <xsd:complexType name="ResponseHeader">
+        <xsd:sequence>
+          <xsd:element name="hostSerialNo" type="xsd:string"/>
+          <xsd:element name="responseTimeStamp" type="xsd:string"/>
+          <xsd:element name="errorNo" type="xsd:string"/>
+          <xsd:element name="errorInfo" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ResponseHeader" type="IFWXML:ResponseHeader"/>
+      <xsd:complexType name="ErrorInfo">
+        <xsd:sequence>
+          <xsd:element name="errorMessageType" type="xsd:string"/>
+          <xsd:element name="errorCode" type="xsd:string"/>
+          <xsd:element name="errorMessage" type="xsd:string"/>
+          <xsd:element name="errorState" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ErrorInfo" type="IFWXML:ErrorInfo"/>
+      <!-- print -->
+      <xsd:complexType name="printRequest">
+        <xsd:annotation>
+          <xsd:documentation>print</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="requestHeader" type="IFWXML:RequestHeader"/>
+          <xsd:element name="msg" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="printRequest" type="IFWXML:printRequest"/>
+      <xsd:complexType name="printResponse">
+        <xsd:sequence minOccurs="0">
+          <xsd:element name="responseHeader" type="IFWXML:ResponseHeader"/>
+          <xsd:element name="msg" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="printResponse" type="IFWXML:printResponse"/>
+    </xsd:schema>
+  </types>
+  <message name="printRequest">
+    <part element="IFWXML:printRequest" name="print"/>
+  </message>
+  <message name="printResponse">
+    <part element="IFWXML:printResponse" name="print"/>
+  </message>
+  <message name="ErrorInfo">
+    <part element="IFWXML:ErrorInfo" name="ErrorInfo"/>
+  </message>
+  <portType name="ShowService">
+    <operation name="print">
+      <input message="IFWXML:printRequest"/>
+      <output message="IFWXML:printResponse"/>
+      <fault message="IFWXML:ErrorInfo" name="ErrorResponseType"/>
+    </operation>
+  </portType>
+  <binding name="ShowServiceSOAPBinding" type="IFWXML:ShowService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="print">
+      <soap:operation soapAction="http://www.ibm.com/ima/ifw/print"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="ErrorResponseType">
+        <soap:fault name="ErrorResponseType" namespace="" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="ShowService">
+    <port binding="IFWXML:ShowServiceSOAPBinding" name="ShowServiceSOAPPort">
+      <soap:address location="http://rpcserver.test.com:8080//test/bShowService"/>
+    </port>
+  </service>
+</definitions>
